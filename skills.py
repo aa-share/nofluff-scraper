@@ -30,12 +30,12 @@ def page_number(url):
     return 1
 
 def get_offers(keyword):
-  base_url = "https://nofluffjobs.com/pl/" + keyword
+  base_url = "https://nofluffjobs.com/pl/" + "?page=1" + keyword
   jobs = []
   i=0
   for p in range(1,(page_number(base_url)+1)):
 
-    url = base_url + "?page=" + str(p)
+    url = "https://nofluffjobs.com/pl/" + "?page=" + str(p) + keyword
     s = requests.session()
     r = s.get(url)
     soup = BeautifulSoup(r.content, 'html.parser')
@@ -72,7 +72,7 @@ def get_skill(url):
   skill["url"]=url
   return skill
 
-def skill_collection(offers, skills_file ="devops-skills.txt"):
+def skill_collection(offers, skills_file = "devops-skills.txt"):
   skill_collection = {}
   offers = (x for x in offers if x is not None)
   for url in offers:
@@ -84,9 +84,17 @@ def skill_collection(offers, skills_file ="devops-skills.txt"):
   skills_file.close()
 
 def main():
-  category_filter = str(sys.argv[1])
+  category_filter = sys.argv[1]
+  print(len(sys.argv))
+  print(sys.argv)
+  print(sys.argv[1])
   offers = get_offers(category_filter)
-  skill_collection(offers, category_filter + "-skills.txt")
+  if len(sys.argv) == 3:
+    filename = str(sys.argv[2]) + "-skills.txt"
+  else:
+    filename = category_filter + "-skills.txt"
+
+  skill_collection(offers, filename)
 
 if __name__ == "__main__":
   main()
