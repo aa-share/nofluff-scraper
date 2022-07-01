@@ -24,18 +24,20 @@ def page_number(url):
       pass
 
   page_number = [int(page) for sublist in page_number for page in sublist if check_int(page)]
+  return sorted(page_number, key=int, reverse=True)[0]
   try:
     return sorted(page_number, key=int, reverse=True)[0]
   except:
+    print("sorting error")
     return 1
 
 def get_offers(keyword):
-  base_url = "https://nofluffjobs.com/pl/" + "?page=1" + keyword
+  base_url = "https://nofluffjobs.com/pl/" + keyword
   jobs = []
   i=0
   for p in range(1,(page_number(base_url)+1)):
 
-    url = "https://nofluffjobs.com/pl/" + "?page=" + str(p) + keyword
+    url = "https://nofluffjobs.com/pl/" + keyword + "?page=" + str(p)
     s = requests.session()
     r = s.get(url)
     soup = BeautifulSoup(r.content, 'html.parser')
@@ -85,9 +87,6 @@ def skill_collection(offers, skills_file = "devops-skills.txt"):
 
 def main():
   category_filter = sys.argv[1]
-  print(len(sys.argv))
-  print(sys.argv)
-  print(sys.argv[1])
   offers = get_offers(category_filter)
   if len(sys.argv) == 3:
     filename = str(sys.argv[2]) + "-skills.txt"
